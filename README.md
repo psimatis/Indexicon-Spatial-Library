@@ -11,7 +11,7 @@ I often must modify or benchmark a spatial index. Unfortunately, most implementa
 
 ## Quick Start
 
-To compile and run all test for all indexes:
+To compile and test all indexes:
 
 ```bash
 cd test
@@ -53,7 +53,7 @@ Test layout:
 | **Oct-tree** | `octtree.hpp` | 3D | Point | A 3D extension of the PR Quad-tree that recursively divides space into eight equal octants at the midpoint of each axis. |
 | **KD-tree** | `kdtree.hpp` | Any | Point | A KD-tree utilizing binary space partitioning and bucket leaves. The splitting dimension is chosen dynamically via Adaptive (widest data spread), Round-robin (depth cycling), or Longest-axis (widest bounding box) strategies. Bulk-loading recursively halves data at the median coordinate. Dynamic insertions trigger local leaf splits without global rebalancing, while deletions merge underflowing sibling leaves. |
 
-All indexes support: packing, insertion, deletion, range queries, kNN, and calculate statistics.
+All indexes support: packing, insertion, deletion, range queries, kNN, and statistics.
 
 ## Partitioning Examples
 
@@ -90,3 +90,24 @@ When adding a new index, please include:
 - Support for the common API where applicable: bulk loading, insertion, deletion, range queries, kNN queries, and statistics.
 
 Hopefully, **Indexicon** will grow into a grimoire of indexes, expanded by those brave enough to peer into the geometry of the unknown.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Citation
+
+If you use Indexicon in a project, paper, benchmark, or product, please cite:
+
+```bibtex
+@software{simatis_indexicon_2026,
+  author = {Simatis, Panos},
+  title = {Indexicon: A Spatial Indexing Library},
+  year = {2026},
+  url = {https://github.com/psimatis/Indexicon-Spatial-Library},
+  license = {MIT}
+}
+```
+
+
+A paper describing Indexicon is in preparation. Once published, please cite the paper instead.

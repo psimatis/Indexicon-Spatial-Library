@@ -4,8 +4,8 @@ I often must modify or benchmark a spatial index. Unfortunately, most implementa
 
 ### Features
 
-- Dependency-free C++17 single-header implementations.
-- Includes R-tree, Quad-tree, Oct-tree, and KD-tree variants.
+- Dependency-free single-header implementations in C++.
+- Includes R-tree, Quad-tree, and KD-tree variants.
 - Unified API for bulk loading, insertion, deletion, range queries, kNN queries, and statistics.
 - Supports point and minimum bounding box (MBB) data.
 
@@ -98,7 +98,7 @@ You can generate your own queries using the query generator provided.
 
 
 ## Contributing
-Contributions are welcome. You can contribute by adding new indexes, improving existing ones, fixing bugs, adding tests, or improving documentation. Before submitting a pull request, please make sure the index follows the design rules:
+Contributions are welcome. Before submitting a pull request, please ensure you follow the design rules:
 1. **No dependencies**: indexes rely solely on C++ standard library.
 2. **Templates**: indexes can be adapted to different data types.
 3. **Single-header**: every index is a standalone `.hpp` file.

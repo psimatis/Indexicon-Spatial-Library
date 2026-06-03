@@ -15,12 +15,9 @@ TESTS=(
     kdtree/kdtree_point_3d.cpp
 )
 
-mkdir -p build
-
 for t in "${TESTS[@]}"; do
     echo "=== Compiling $t ==="
-    exe="build/${t%.cpp}.exe"
-    mkdir -p "$(dirname "$exe")"
+    exe="${t%.cpp}.exe"
     g++ -std=c++17 -O3 -o "$exe" "$t"
     echo "=== Running $t ==="
     ./"$exe"

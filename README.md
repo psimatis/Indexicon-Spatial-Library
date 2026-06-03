@@ -11,7 +11,7 @@ I often must modify or benchmark a spatial index. Unfortunately, most implementa
 
 ## Quick Start
 
-To compile and run all tests:
+To compile and run all test for all indexes:
 
 ```bash
 cd test
@@ -20,7 +20,7 @@ bash run_all.sh
 
 ## Project Structure
  - `indexes/` index implementations.
- - `test/` test programs and run script.
+ - `test/` examples and test programs, grouped by index family.
  - `data/` sample data.
 
 
@@ -31,36 +31,16 @@ Requirements: a C++17-compatible compiler.
 **Compile and run a single test:**
 ```bash
 cd test
-g++ -std=c++17 -O2 -o test_rtree_point.exe test_rtree_point.cpp
-./test_rtree_point.exe
+g++ -std=c++17 -O2 -o rtree/rtree_point_2d.exe rtree/rtree_point_2d.cpp
+./rtree/rtree_point_2d.exe
 ```
 
-**Use an index in your code:**
-```cpp
-#include "indexes/rtree_point.hpp"
+The tests are also the best usage examples. Each one shows the full flow for an index: load data, bulk load, insert, delete, range query, kNN query, and statistics.
 
-// Bulk load
-std::vector<std::pair<RPoint<double,2>, size_t>> pts = { ... };
-RTree<size_t, double, 2> tree(pts.begin(), pts.end());
-
-// Insert / delete
-tree.insert(RPoint<double,2>(1.0, 2.0), 42);
-tree.remove(RPoint<double,2>(1.0, 2.0), 42);
-
-// Range query
-RBox<double,2> box;
-box.minCorner = RPoint<double,2>(0.0, 0.0);
-box.maxCorner = RPoint<double,2>(5.0, 5.0);
-std::vector<size_t> results;
-tree.query(box, std::back_inserter(results));
-
-// kNN query
-std::vector<size_t> neighbors;
-tree.knnQuery(RPoint<double,2>(1.0, 2.0), 10, std::back_inserter(neighbors));
-
-// Statistics
-auto s = tree.getStatistics();
-```
+Test layout:
+- `test/rtree/`: R-tree point and MBR examples in 2D and 3D.
+- `test/quadtree/`: Quad-tree point examples, MX-CIF Quad-tree MBR examples, and Oct-tree examples.
+- `test/kdtree/`: KD-tree point examples in 2D and 3D.
 
 ## Indexes
 

@@ -1,36 +1,52 @@
-#include <iostream>
+#include <array>
 #include <fstream>
+#include <iostream>
 #include <vector>
-#include "../indexes/rtree_mbr.hpp"
+#include "../../indexes/rtree_mbr.hpp"
 
 using namespace std;
 
 int main() {
+    constexpr size_t Dims = 3;
+    constexpr size_t BoxCoordinates = Dims * 2;
+    constexpr size_t Capacity = 128;
+
     // Load data
     ifstream fin("../data/input/sample_data.txt");
-    if (!fin) { cerr << "Cannot open sample_data.txt\n"; return 1; }
+    if (!fin) { 
+        cerr << "Cannot open sample_data.txt\n"; 
+        return 1; 
+    }
 
-    // Each line: x0 y0 z0 x1 y1 z1  (3-D MBB)
-    vector<array<double,6>> recs;
+    // Each line: x0 y0 z0 x1 y1 z1
+    vector<array<double, BoxCoordinates>> recs;
     double x0, y0, z0, x1, y1, z1;
     while (fin >> x0 >> y0 >> z0 >> x1 >> y1 >> z1)
-        recs.push_back({ x0, y0, z0, x1, y1, z1 });
+        recs.push_back({x0, y0, z0, x1, y1, z1});
     cout << "Loaded " << recs.size() << " MBRs\n";
 
-    using Tree = RTree<size_t, double, 3>;
-    using Box  = Tree::BoxType;
-    using Pt   = Tree::PointType;
+    using Tree = RTree<size_t, double, Dims, Capacity>;
+    // Advanced configuration:
+    // constexpr size_t MinElements = (Capacity * 3) / 10;
+    // constexpr size_t ReinsertCount = (Capacity * 3) / 10;
+    // constexpr size_t OverlapCostThreshold = 32;
+    // constexpr size_t InternalNodeFanout = Capacity;
+    // constexpr size_t MinInternalNodeFanout = (InternalNodeFanout * 3) / 10;
+    // using Tree = RTree<size_t, double, Dims, Capacity, MinElements, ReinsertCount,
+    //                    OverlapCostThreshold, InternalNodeFanout, MinInternalNodeFanout>;
+    using Box = Tree::BoxType;
+    using Pt = Tree::PointType;
 
     size_t split = recs.size() * 8 / 10;
 
     // Bulk load
-    vector<pair<Box,size_t>> bulk;
+    vector<pair<Box, size_t>> bulk;
     bulk.reserve(split);
     for (size_t i = 0; i < split; ++i) {
         Box b;
         b.minCorner = Pt(recs[i][0], recs[i][1], recs[i][2]);
         b.maxCorner = Pt(recs[i][3], recs[i][4], recs[i][5]);
-        bulk.push_back({ b, i });
+        bulk.push_back({b, i});
     }
 
     Tree tree(bulk.begin(), bulk.end());
@@ -51,7 +67,9 @@ int main() {
         Box b;
         b.minCorner = Pt(recs[i][0], recs[i][1], recs[i][2]);
         b.maxCorner = Pt(recs[i][3], recs[i][4], recs[i][5]);
-        if (tree.remove(b, i)) ++del_count;
+        bool removed = tree.remove(b, i);
+        if (removed)
+            ++del_count;
     }
     cout << "Deleted " << del_count << " MBRs\n";
 
@@ -72,9 +90,9 @@ int main() {
     // Statistics
     auto s = tree.getStatistics();
     cout << "\n=== R-tree (MBR, 3D) statistics ===\n";
-    cout << "  height          : " << s.height           << "\n";
-    cout << "  num MBRs        : " << s.numPoints        << "\n";
-    cout << "  num leaves      : " << s.numLeaves        << "\n";
+    cout << "  height          : " << s.height << "\n";
+    cout << "  num MBRs        : " << s.numPoints << "\n";
+    cout << "  num leaves      : " << s.numLeaves << "\n";
     cout << "  num internals   : " << s.numInternalNodes << "\n";
-    cout << "  memory (bytes)  : " << s.sizeBytes        << "\n";
+    cout << "  memory (bytes)  : " << s.sizeBytes << "\n";
 }

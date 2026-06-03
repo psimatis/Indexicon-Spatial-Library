@@ -26,7 +26,7 @@ bash run_all.sh
 
 ## Manual Compilation
 
-Requirements: a C++17-compatible compiler (e.g. GCC ≥ 9).
+Requirements: a C++17-compatible compiler.
 
 **Compile and run a single test:**
 ```bash

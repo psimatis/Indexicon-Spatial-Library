@@ -221,9 +221,11 @@ public:
             insertImpl(internal->right, pt, val, depth + 1);
     }
 
-    void remove(const Point& pt) {
-        if (removeFrom(root, pt))
+    bool remove(const Point& pt) {
+        bool removed = removeFrom(root, pt);
+        if (removed)
             treeSize--;
+        return removed;
     }
 
     template <typename OutIter>

@@ -4,18 +4,25 @@ set -e
 cd "$(dirname "$0")"
 
 TESTS=(
-    test_rtree_point
-    test_rtree_mbr
-    test_quadtree
-    test_mxcif_quadtree
-    test_octtree
-    test_kdtree
+    rtree/rtree_point_2d.cpp
+    rtree/rtree_point_3d.cpp
+    rtree/rtree_mbr_2d.cpp
+    rtree/rtree_mbr_3d.cpp
+    quadtree/quadtree_point_2d.cpp
+    quadtree/mxcif_quadtree_mbr_2d.cpp
+    quadtree/octtree_point_3d.cpp
+    kdtree/kdtree_point_2d.cpp
+    kdtree/kdtree_point_3d.cpp
 )
+
+mkdir -p build
 
 for t in "${TESTS[@]}"; do
     echo "=== Compiling $t ==="
-    g++ -std=c++17 -O3 -o "$t.exe" "$t.cpp"
+    exe="build/${t%.cpp}.exe"
+    mkdir -p "$(dirname "$exe")"
+    g++ -std=c++17 -O3 -o "$exe" "$t"
     echo "=== Running $t ==="
-    ./"$t.exe"
+    ./"$exe"
     echo ""
 done

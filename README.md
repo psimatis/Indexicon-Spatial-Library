@@ -102,14 +102,15 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 If you use Indexicon in a project, paper, benchmark, or product, please cite:
 
 ```bibtex
-@software{simatis_indexicon_2026,
-  author = {Simatis, Panos},
-  title = {Indexicon: A Spatial Indexing Library},
-  year = {2026},
-  url = {https://github.com/psimatis/Indexicon-Spatial-Library},
-  license = {MIT}
+@misc{simatis2026indexiconspatialindexinglibrary,
+      title={Indexicon: A Spatial Indexing Library}, 
+      author={Panagiotis Simatis and Panagiotis Bouros and Nikos Mamoulis},
+      year={2026},
+      eprint={2606.04676},
+      archivePrefix={arXiv},
+      primaryClass={cs.DB},
+      url={https://arxiv.org/abs/2606.04676}, 
 }
 ```
 
-
-A paper describing Indexicon is in preparation. Once published, please cite the paper instead.
+The accompanying paper is available on arXiv: https://arxiv.org/abs/2606.04676

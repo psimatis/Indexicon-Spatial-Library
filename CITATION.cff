@@ -1,9 +1,25 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it using the metadata from this file."
-title: "Indexicon: A Dependency-Free Spatial Index Library"
+message: "If you use Indexicon, please cite the accompanying paper."
+title: "Indexicon: A Spatial Indexing Library"
 authors:
   - family-names: "Simatis"
-    given-names: "Panos"
+    given-names: "Panagiotis"
+  - family-names: "Bouros"
+    given-names: "Panagiotis"
+  - family-names: "Mamoulis"
+    given-names: "Nikos"
 repository-code: "https://github.com/psimatis/Indexicon-Spatial-Library"
 license: "MIT"
 type: software
+preferred-citation:
+  type: article
+  title: "Indexicon: A Spatial Indexing Library"
+  authors:
+    - family-names: "Simatis"
+      given-names: "Panagiotis"
+    - family-names: "Bouros"
+      given-names: "Panagiotis"
+    - family-names: "Mamoulis"
+      given-names: "Nikos"
+  year: 2026
+  url: "https://arxiv.org/abs/2606.04676"

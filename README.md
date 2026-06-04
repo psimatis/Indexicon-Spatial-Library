@@ -14,7 +14,7 @@ To compile and test all indexes:
 
 ```bash
 cd test
-bash run_all.sh
+./run_all.sh
 ```
 
 ## Indexes
@@ -35,7 +35,7 @@ A visual representation of how each index partitions the same data
 
 ![Space Partitioning Examples](figures/partitioning_example.png)
 
-### R-tree Benchmarks
+### R-tree Benchmark
 
 A benchmark of Indexicon's R-tree against Boost's R-tree on insertion and range query times for various node capacities.
 
@@ -84,12 +84,6 @@ Contributions are welcome. Before submitting a pull request, please ensure you f
 1. **No dependencies**: indexes rely solely on C++ standard library.
 2. **Templates**: indexes can be adapted to different data types.
 3. **Single-header**: every index is a standalone `.hpp` file.
-
-When adding a new index, please include:
-- The index implementation under `indexes/`.
-- One working example under `test/`.
-- A short description in the README.
-- Support for the common API where applicable (e.g., bulk loading).
 
 *Hopefully, **Indexicon** will grow into a grimoire of indexes, expanded by those brave enough to peer into the geometry of the unknown.*
 

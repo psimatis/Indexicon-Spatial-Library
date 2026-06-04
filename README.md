@@ -97,7 +97,7 @@ When adding a new index, please include:
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-## Citation
+## Reference
 
 If you use Indexicon in a project, paper, benchmark, or product, please cite:
 

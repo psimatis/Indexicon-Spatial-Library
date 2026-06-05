@@ -1,9 +1,9 @@
 # Indexicon
 
-I often must modify or benchmark a spatial index. Unfortunately, most implementations are *Cthulhian dependency tangles* or lack features. That's why I made **Indexicon**, a drop-in spatial index library with top-tier performance.
+I often must modify or benchmark a spatial index. Unfortunately, most implementations are complex or lack features. That's why I made **Indexicon**, a drop-in spatial index library with top-tier performance.
 
 ### Features
-- Includes R-tree, Quad-tree, and KD-tree variants.
+- Includes highly efficient R-tree, Quad-tree, and KD-tree variants.
 - Unified API for bulk loading, insertion, deletion, range queries, kNN queries, and statistics.
 - Supports point and minimum bounding box (MBB) data.
 - Dependency-free single-header implementations in C++.
@@ -21,17 +21,15 @@ cd test
 
 | Index | File | Dims | Data Type | Description |
 | :--- | :--- | :---: | :---: | :--- |
-| **R-tree** | `rtree_point.hpp`, `rtree_mbr.hpp` | Any | Point / MBB | An R-tree implementation supporting decoupled internal and leaf node capacities. It features top-down bulk loading (via longest-axis median bisection) and R* insertions with forced reinsertions and margin-minimizing splits. Deletions dissolve sparse nodes and reinsert orphans. `rtree_point.hpp` and `rtree_mbr.hpp` are nearly identical implementations for point and MBR data, respectively. |
+| **R-tree** | `rtree_point.hpp`, `rtree_mbr.hpp` | Any | Point / MBB | An R-tree implementation supporting decoupled internal and leaf node capacities. It features top-down bulk loading and R* insertions. Deletions dissolve sparse nodes and reinsert orphans. `rtree_point.hpp` and `rtree_mbr.hpp` are nearly identical implementations for point and MBR data, respectively. |
 | **Quad-tree** | `quadtree.hpp` | 2D | Point | A Quad-tree supporting three splitting strategies: Point-Region (PR) (geometric midpoints), Pseudo-median (independent axis medians), and Longest-axis (median of the widest span). It features bulk-loading, automatic expansion with re-rooting for out-of-bounds insertions, and leaf overflowing to prevent infinite recursion from duplicate points. |
 | **MX-CIF Quad-tree** | `mxcif_quadtree.hpp` | 2D | MBB | An MX-CIF variant of the Quad-tree utilizing the PR splitting strategy. It efficiently handles spatial extents by storing boundary-straddling MBBs in internal nodes, while non-straddling MBBs are stored in bucket leaves. |
 | **Oct-tree** | `octtree.hpp` | 3D | Point | A 3D extension of the PR Quad-tree that recursively divides space into eight equal octants at the midpoint of each axis. |
-| **KD-tree** | `kdtree.hpp` | Any | Point | A KD-tree utilizing binary space partitioning and bucket leaves. The splitting dimension is chosen dynamically via Adaptive (widest data spread), Round-robin (depth cycling), or Longest-axis (widest bounding box) strategies. Bulk-loading recursively halves data at the median coordinate. Dynamic insertions trigger local leaf splits without global rebalancing, while deletions merge underflowing sibling leaves. |
-
-All indexes support: packing, insertion, deletion, range queries, kNN, and statistics.
+| **KD-tree** | `kdtree.hpp` | Any | Point | A KD-tree utilizing binary space partitioning and bucket leaves. The splitting dimension is chosen via Adaptive (widest data spread), Round-robin (depth cycling), or Longest-axis (widest bounding box) strategies. Bulk-loading recursively halves data at the median coordinate. Dynamic insertions trigger local leaf splits without global rebalancing, while deletions merge underflowing sibling leaves. |
 
 ### Partitioning Examples
 
-A visual representation of how each index partitions the same data
+A visual representation of how each index partitions data
 
 ![Space Partitioning Examples](figures/partitioning_example.png)
 

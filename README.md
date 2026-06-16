@@ -21,26 +21,40 @@ cd test
 
 | Index | File | Dims | Data Type | Description |
 | :--- | :--- | :---: | :---: | :--- |
-| **R-tree** | `rtree_point.hpp`, `rtree_mbr.hpp` | Any | Point / MBB | An R-tree implementation supporting decoupled internal and leaf node capacities. It features top-down bulk loading and R* insertions. Deletions dissolve sparse nodes and reinsert orphans. `rtree_point.hpp` and `rtree_mbr.hpp` are nearly identical implementations for point and MBR data, respectively. |
-| **Quad-tree** | `quadtree.hpp` | 2D | Point | A Quad-tree supporting three splitting strategies: Point-Region (PR) (geometric midpoints), Pseudo-median (independent axis medians), and Longest-axis (median of the widest span). It features bulk-loading, automatic expansion with re-rooting for out-of-bounds insertions, and leaf overflowing to prevent infinite recursion from duplicate points. |
-| **MX-CIF Quad-tree** | `mxcif_quadtree.hpp` | 2D | MBB | An MX-CIF variant of the Quad-tree utilizing the PR splitting strategy. It efficiently handles spatial extents by storing boundary-straddling MBBs in internal nodes, while non-straddling MBBs are stored in bucket leaves. |
-| **Oct-tree** | `octtree.hpp` | 3D | Point | A 3D extension of the PR Quad-tree that recursively divides space into eight equal octants at the midpoint of each axis. |
-| **KD-tree** | `kdtree.hpp` | Any | Point | A KD-tree utilizing binary space partitioning and bucket leaves. The splitting dimension is chosen via Adaptive (widest data spread), Round-robin (depth cycling), or Longest-axis (widest bounding box) strategies. Bulk-loading recursively halves data at the median coordinate. Dynamic insertions trigger local leaf splits without global rebalancing, while deletions merge underflowing sibling leaves. |
+| **R-tree** | `rtree_point.hpp`, `rtree_mbr.hpp` | Any | Point / MBB | An R-tree supporting decoupled internal and leaf node capacities. It features top-down bulk loading and R* insertions. Deletions dissolve sparse nodes and reinsert orphans. `rtree_point.hpp` and `rtree_mbr.hpp` are nearly identical implementations for point and MBB data, respectively. |
+| **Quad-tree** | `quadtree.hpp` | 2D | Point | A Quad-tree supporting three splitting strategies: Point-Region (PR) (geometric midpoints), Pseudo-median (independent axis medians), and Longest-axis (median of the widest span). It features bulk-loading, out-of-bounds insertions, and leaf overflows to handle duplicate points. |
+| **MX-CIF Quad-tree** | `mxcif_quadtree.hpp` | 2D | MBB | An MX-CIF Quad-tree utilizing the PR splitting strategy. It handles spatial extents by storing boundary-straddling MBBs in internal nodes, while non-straddling MBBs are stored in bucket leaves. |
+| **Oct-tree** | `octtree.hpp` | 3D | Point | A 3D extension of the PR Quad-tree that divides space into equal octants at the midpoint of each axis. |
+| **KD-tree** | `kdtree.hpp` | Any | Point | A KD-tree with binary space partitioning and bucket leaves. The splitting dimension is chosen via Adaptive (widest data spread), Round-robin (depth cycling), or Longest-axis (widest bounding box) strategies. Bulk-loading recurisevely halves data at the median coordinate. Insertions split leaves, while deletions merge underflowing sibling leaves. |
 
 ### Partitioning Examples
-
-A visual representation of how each index partitions data
 
 ![Space Partitioning Examples](figures/partitioning_example.png)
 
 ### R-tree Benchmark
 
-A benchmark of Indexicon's R-tree against Boost's R-tree on insertion and range query times for various node capacities.
+Indexicon's R-tree against Boost's R-tree on insertion and range query times for various node capacities.
 
 ![R-tree Insert Time](figures/rtree_insert_time.png)
 
 ![R-tree Query Time](figures/rtree_query_time.png)
 
+> **Note:** For a comprehensive performance evaluation including all indexes, refer to our [accompanying paper](https://arxiv.org/abs/2606.04676).
+
+
+## Data
+
+Datasets and query files can be downloaded [here](https://drive.google.com/drive/folders/1rHr9DKvwj_ic5JhOkfwQOHcqIt1_FgjQ?usp=sharing). 
+You can generate your own queries using the query generator provided.
+
+| Dataset | Records | Type | Size | Dims | Dupl. | Description |
+| :--- | ---: | :--- | ---: | :---: | ---: | :--- |
+| MARINE | 25.0M | Point | 716.2 MB | 3D | 0.01% | US coastal vessel tracking data |
+| MIAMI | 3.5M | MBB | 312.2 MB | 3D | 0.02% | Urban traffic-object MBBs in Miami |
+| OSM | 103.5M | Point | 2.0 GB | 2D | 0.03% | Geolocations in Central America |
+| TAXIS | 112.8M | Point | 2.2 GB | 2D | 14.55% | NYC Taxi pickup geolocations |
+| TIGER | 17.9M | MBB | 715.2 MB | 2D | 5.60% | Lower 48 street MBBs |
+| TORONTO | 21.6M | Point | 679.5 MB | 3D | 6.94% | Toronto urban LiDAR point cloud |
 
 ## Manual Compilation
 
@@ -60,25 +74,10 @@ g++ -std=c++17 -O2 -o rtree/rtree_point_2d.exe rtree/rtree_point_2d.cpp
 ./rtree/rtree_point_2d.exe
 ```
 
-The tests are also the best usage examples. Each one shows the full flow for an index: load data, bulk load, insert, delete, range query, kNN query, and statistics.
-
-## Data
-
-Datasets and query files can be downloaded [here](https://drive.google.com/drive/folders/1rHr9DKvwj_ic5JhOkfwQOHcqIt1_FgjQ?usp=sharing). 
-You can generate your own queries using the query generator provided.
-
-| Dataset | Records | Type | Size | Dims | Dupl. | Description |
-| :--- | ---: | :--- | ---: | :---: | ---: | :--- |
-| MARINE | 25.0M | Point | 716.2 MB | 3D | 0.01% | US coastal vessel tracking data |
-| MIAMI | 3.5M | MBB | 312.2 MB | 3D | 0.02% | Urban traffic-object MBBs in Miami |
-| OSM | 103.5M | Point | 2.0 GB | 2D | 0.03% | Geolocations in Central America |
-| TAXIS | 112.8M | Point | 2.2 GB | 2D | 14.55% | NYC Taxi pickup geolocations |
-| TIGER | 17.9M | MBB | 715.2 MB | 2D | 5.60% | Lower 48 street MBBs |
-| TORONTO | 21.6M | Point | 679.5 MB | 3D | 6.94% | Toronto urban LiDAR point cloud |
-
+The tests are the best usage examples. Each one shows the full flow for an index: load data, bulk load, insert, delete, range query, kNN query, and statistics.
 
 ## Contributing
-Contributions are welcome. Before submitting a pull request, please ensure you follow the design rules:
+Contributions are welcome. Before submitting a pull request, please ensure the following:
 1. **No dependencies**: indexes rely solely on C++ standard library.
 2. **Templates**: indexes can be adapted to different data types.
 3. **Single-header**: every index is a standalone `.hpp` file.

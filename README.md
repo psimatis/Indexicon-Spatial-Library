@@ -1,3 +1,7 @@
+![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![arXiv](https://img.shields.io/badge/arXiv-2606.04676-b31b1b.svg)](https://arxiv.org/abs/2606.04676)
+
 # Indexicon
 
 I often must modify or benchmark a spatial index. Unfortunately, most implementations are complex or lack features. That's why I made **Indexicon**, a drop-in spatial index library with top-tier performance.

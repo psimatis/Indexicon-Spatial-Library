@@ -1,6 +1,7 @@
 ![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-2606.04676-b31b1b.svg)](https://arxiv.org/abs/2606.04676)
+[![PyPI version](https://img.shields.io/pypi/v/indexicon.svg)](https://pypi.org/project/indexicon/)
 
 # Indexicon
 
@@ -8,14 +9,26 @@ I often must modify or benchmark a spatial index. Unfortunately, most implementa
 - Highly efficient R-tree, Quad-tree, and KD-tree single-header C++ implementations.
 - A unified API for packing, insertion, deletion, range queries, kNN queries, and statistics.
 - Native support for point and minimum bounding box (MBB) data.
+- A pip-installable Python API combining NumPy convenience with native C++ performance.
 
 ## Quick Start
 
 To compile and test all indexes:
 
 ```bash
-./test/run_all.sh
+./tests/run_all.sh
 ```
+
+## Python Library
+
+If you want to use Indexicon in Python install the bindings with:
+
+```bash
+pip install indexicon
+```
+
+See the [Python documentation](python/README.md) for details.
+
 
 ## Indexes
 
@@ -46,16 +59,17 @@ Indexicon against Boost on insertion and range query times for various node capa
 
 ### Project Structure
 - `indexes/`: index implementations.
-- `test/rtree/`: R-tree point and MBR examples in 2D and 3D.
-- `test/quadtree/`: Quad-tree point examples, MX-CIF Quad-tree MBR examples, and Oct-tree examples.
-- `test/kdtree/`: KD-tree point examples in 2D and 3D.
+- `python/`: Python bindings, tests, and examples.
+- `tests/rtree/`: R-tree point and MBR examples in 2D and 3D.
+- `tests/quadtree/`: Quad-tree point examples, MX-CIF Quad-tree MBR examples, and Oct-tree examples.
+- `tests/kdtree/`: KD-tree point examples in 2D and 3D.
 - `data/`: sample data.
 
 Requirements: a C++17-compatible compiler.
 
 **Compile and run a single test:**
 ```bash
-cd test
+cd tests
 g++ -std=c++17 -O2 -o rtree/rtree_point_2d.exe rtree/rtree_point_2d.cpp
 ./rtree/rtree_point_2d.exe
 ```

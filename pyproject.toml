@@ -39,6 +39,8 @@ sdist.exclude = [
 ]
 
 [tool.cibuildwheel]
+build-verbosity = 1
+skip = ["cp3??t-*"]
 test-requires = ["numpy>=1.20", "pytest>=7"]
 test-command = "pytest {project}/python/tests"
 

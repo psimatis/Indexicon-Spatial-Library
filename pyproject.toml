@@ -40,9 +40,12 @@ sdist.exclude = [
 
 [tool.cibuildwheel]
 build-verbosity = 1
-skip = ["cp3??t-*"]
+skip = ["cp3??t-*", "*-win32", "*_i686"]
 test-requires = ["numpy>=1.20", "pytest>=7"]
 test-command = "pytest {project}/python/tests"
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.14"

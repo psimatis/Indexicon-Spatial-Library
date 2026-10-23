@@ -13,4 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - run: unzip -o data/input/sample_data.zip -d data/input
+
       - run: bash tests/run_all.sh

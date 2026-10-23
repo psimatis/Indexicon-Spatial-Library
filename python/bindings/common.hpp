@@ -5,6 +5,7 @@
 #include <nanobind/stl/string.h>
 #include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <limits>
 #include <stdexcept>
 #include <string>

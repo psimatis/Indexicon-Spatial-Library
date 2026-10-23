@@ -847,6 +847,7 @@ public:
 
         if (found) {
             --size;
+            size -= orphans.size();
             for (auto& orphan : orphans)
                 insert(orphan.first, orphan.second);
             condenseRoot();

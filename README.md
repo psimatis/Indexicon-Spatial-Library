@@ -5,32 +5,14 @@
 
 # Indexicon
 
-I often must modify or benchmark a spatial index. Unfortunately, most implementations are complex or lack features. That's why I made Indexicon, a drop-in library with state-of-the-art performance. It features:
+I often need to modify or benchmark a spatial index. Unfortunately, most implementations are complex or lack features. That's why I made Indexicon, a drop-in library with state-of-the-art performance. It features:
 - Highly efficient R-tree, Quad-tree, and KD-tree single-header C++ implementations.
 - A unified API for packing, insertion, deletion, range queries, kNN queries, and statistics.
 - Native support for point and minimum bounding box (MBB) data.
 - A pip-installable Python API combining NumPy convenience with native C++ performance.
 
-## Quick Start
 
-To compile and test all indexes:
-
-```bash
-./tests/run_all.sh
-```
-
-## Python Library
-
-If you want to use Indexicon in Python install the bindings with:
-
-```bash
-pip install indexicon
-```
-
-See the [Python documentation](python/README.md) for details.
-
-
-## Indexes
+## Supported Indexes
 
 ![Space Partitioning Examples](figures/partitioning_example.png)
 
@@ -40,58 +22,85 @@ See the [Python documentation](python/README.md) for details.
 | **Quad-tree** | `quadtree.hpp` | 2D | Point | It supports three splitting strategies: Point-Region (PR) (geometric midpoints), Pseudo-median (independent axis medians), and Longest-axis (median of the widest span). It features bulk-loading, out-of-bounds insertions, and leaf overflows to handle duplicate points. |
 | **MX-CIF Quad-tree** | `mxcif_quadtree.hpp` | 2D | MBB | It uses PR splits and stores boundary-straddling MBBs in internal nodes. |
 | **Oct-tree** | `octtree.hpp` | 3D | Point | 3D extension of the PR Quad-tree dividing space into equal octants. |
-| **KD-tree** | `kdtree.hpp` | Any | Point | It supports bucket leaves and three splitting strategies: Round-robin, Adaptive (widest data spread) , and Longest-axis (widest bounding box). Packing recurisevely halves data at the median coordinate. Insertions/deletions handle leaf overflows/underflows. |
-
-
-
-### R-tree Benchmark
-
-Indexicon against Boost on insertion and range query times for various node capacities.
+| **KD-tree** | `kdtree.hpp` | Any | Point | It supports bucket leaves and three splitting strategies: Round-robin, Adaptive (widest data spread), and Longest-axis (widest bounding box). Packing recursively halves data at the median coordinate. Insertions/deletions handle leaf overflows/underflows. |
 
 ![R-tree Insert Time](figures/rtree_insert_time.png)
 
 ![R-tree Query Time](figures/rtree_query_time.png)
 
-> **Note:** For a comprehensive benchmark including all indexes, refer to our [paper](https://arxiv.org/abs/2606.04676).
+> For a comprehensive benchmark refer to our [paper](https://arxiv.org/abs/2606.04676).
 
+
+## Quick Start
+
+Copy a header from `indexes/` into your project and use it:
+
+```cpp
+#include "indexes/rtree_point.hpp"
+
+int main() {
+    using Tree = RTree<size_t, double, 2>;  // id type, coordinate type, dimensions
+    using Pt = Tree::PointType;
+
+    std::vector<std::pair<Pt, size_t>> data = {{Pt(1, 1), 0}, {Pt(2, 3), 1}, {Pt(5, 4), 2}};
+    Tree tree(data.begin(), data.end());  // bulk-load
+
+    tree.insert(Pt(3, 3), 3);
+    tree.remove(Pt(1, 1), 0);
+
+    Tree::BoxType box;
+    box.minCorner = Pt(0, 0);
+    box.maxCorner = Pt(4, 4);
+    std::vector<size_t> hits;
+    tree.query(box, std::back_inserter(hits));  // range query
+
+    std::vector<size_t> nn;
+    tree.knnQuery(Pt(0, 0), 2, std::back_inserter(nn));  // 2 nearest neighbors
+}
+```
+
+To test all indexes:
+
+```bash
+unzip data/input/sample_data.zip -d data/input
+./tests/run_all.sh
+```
+
+
+## Python Library
+
+If you want to use Indexicon in Python:
+
+```bash
+pip install indexicon
+```
+
+See the [Python documentation](python/README.md) for details.
+
+
+## Project Structure
+- `indexes/`: index implementations (one header per index).
+- `python/`: Python bindings, tests, and examples.
+- `tests/`: C++ tests for every index, in 2D and 3D.
+- `data/`: sample data.
 
 ## Manual Compilation
-
-### Project Structure
-- `indexes/`: index implementations.
-- `python/`: Python bindings, tests, and examples.
-- `tests/rtree/`: R-tree point and MBR examples in 2D and 3D.
-- `tests/quadtree/`: Quad-tree point examples, MX-CIF Quad-tree MBR examples, and Oct-tree examples.
-- `tests/kdtree/`: KD-tree point examples in 2D and 3D.
-- `data/`: sample data.
 
 Requirements: a C++17-compatible compiler.
 
 **Compile and run a single test:**
 ```bash
 cd tests
-g++ -std=c++17 -O2 -o rtree/rtree_point_2d.exe rtree/rtree_point_2d.cpp
+g++ -std=c++17 -O3 -o rtree/rtree_point_2d.exe rtree/rtree_point_2d.cpp
 ./rtree/rtree_point_2d.exe
 ```
 
-The tests are the best usage examples. Each one shows the full flow for an index: load data, bulk load, insert, delete, range query, kNN query, and statistics.
+The tests are the best usage examples for data loading, inserts, deletes, range and kNN queries, and getting index statistics.
 
-## Data
-
-Datasets, query files, and query generators can be downloaded [here](https://drive.google.com/drive/folders/1rHr9DKvwj_ic5JhOkfwQOHcqIt1_FgjQ?usp=sharing).
-
-| Dataset | Records | Type | Size | Dims | Dupl. | Description |
-| :--- | ---: | :--- | ---: | :---: | ---: | :--- |
-| MARINE | 25.0M | Point | 716.2 MB | 3D | 0.01% | US coastal vessel tracking data |
-| MIAMI | 3.5M | MBB | 312.2 MB | 3D | 0.02% | Urban traffic-object MBBs in Miami |
-| OSM | 103.5M | Point | 2.0 GB | 2D | 0.03% | Geolocations in Central America |
-| TAXIS | 112.8M | Point | 2.2 GB | 2D | 14.55% | NYC Taxi pickup geolocations |
-| TIGER | 17.9M | MBB | 715.2 MB | 2D | 5.60% | Lower 48 street MBBs |
-| TORONTO | 21.6M | Point | 679.5 MB | 3D | 6.94% | Toronto urban LiDAR point cloud |
 
 ## Contributing
-Contributions are welcome. Before submitting a pull request, please ensure the following:
-1. **No dependencies**: indexes rely solely on C++ standard library.
+Contributions are welcome. Before a pull request, please ensure that:
+1. **No dependencies**: indexes rely solely on the C++ standard library.
 2. **Templates**: indexes can be adapted to different data types.
 3. **Single-header**: every index is a standalone `.hpp` file.
 

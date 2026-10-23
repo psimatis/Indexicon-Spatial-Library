@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "indexicon"
-version = "1.1.0"
+version = "1.1.1"
 description = "Python bindings for Indexicon spatial indexes"
 readme = "python/README.md"
 requires-python = ">=3.10"
@@ -22,8 +22,6 @@ sdist.include = [
     "python/CMakeLists.txt",
     "python/README.md",
     "python/bindings/**",
-    "python/src/**",
-    "python/tests/**",
     "LICENSE",
     "CITATION.cff",
 ]
@@ -34,11 +32,20 @@ sdist.exclude = [
     "**/*.pyo",
     ".pytest_cache/**",
     ".venv/**",
+    "/data/**",
+    "/figures/**",
+    "/tests/**",
+    ".gitignore",
 ]
 
 [tool.cibuildwheel]
+build-verbosity = 1
+skip = ["cp3??t-*", "*-win32", "*_i686"]
 test-requires = ["numpy>=1.20", "pytest>=7"]
 test-command = "pytest {project}/python/tests"
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.14"

@@ -205,13 +205,15 @@ public:
         if (h <= 0) 
             h = CoordType(1);
 
-        CoordType newXLOW = (r.pt[0] < box[XLOW]) ? box[XLOW] - w : box[XLOW];
-        CoordType newXHIGH = (r.pt[0] > box[XHIGH]) ? box[XHIGH] + w : box[XHIGH];
-        CoordType newYLOW = (r.pt[1] < box[YLOW]) ? box[YLOW] - h : box[YLOW];
-        CoordType newYHIGH = (r.pt[1] > box[YHIGH]) ? box[YHIGH] + h : box[YHIGH];
-
-        CoordType oldCenterX = (box[XLOW] + box[XHIGH]) / 2;
-        CoordType oldCenterY = (box[YLOW] + box[YHIGH]) / 2;
+        bool growLowX = r.pt[0] < box[XLOW];
+        bool growLowY = r.pt[1] < box[YLOW];
+        CoordType newXLOW = growLowX ? box[XLOW] - w : box[XLOW];
+        CoordType newXHIGH = growLowX ? box[XHIGH] : box[XHIGH] + w;
+        CoordType newYLOW = growLowY ? box[YLOW] - h : box[YLOW];
+        CoordType newYHIGH = growLowY ? box[YHIGH] : box[YHIGH] + h;
+        CoordType xMid = growLowX ? box[XLOW] : box[XHIGH];
+        CoordType yMid = growLowY ? box[YLOW] : box[YHIGH];
+        size_t oldQ = growLowX ? (growLowY ? NE : SE) : (growLowY ? NW : SW);
 
         auto* oldNode = new QuadTreeNode<CoordType, Value, Capacity, Strategy>(box);
         oldNode->data = move(data);
@@ -219,22 +221,6 @@ public:
         data.clear();
 
         box = {newXLOW, newYLOW, newXHIGH, newYHIGH};
-        
-        CoordType xMid, yMid;
-        if constexpr (Strategy == SplitStrategy::PR) {
-            xMid = (newXLOW + newXHIGH) / 2;
-            yMid = (newYLOW + newYHIGH) / 2;
-        } else {
-            xMid = (box[XLOW] == oldNode->box[XLOW]) ? oldNode->box[XHIGH] : oldNode->box[XLOW];
-            yMid = (box[YLOW] == oldNode->box[YLOW]) ? oldNode->box[YHIGH] : oldNode->box[YLOW];
-            
-            if (xMid == box[XLOW] || xMid == box[XHIGH]) 
-                xMid = (newXLOW + newXHIGH) / 2;
-            if (yMid == box[YLOW] || yMid == box[YHIGH]) 
-                yMid = (newYLOW + newYHIGH) / 2;
-        }
-
-        size_t oldQ = (oldCenterX >= xMid ? 1 : 0) + (oldCenterY < yMid ? 2 : 0);
 
         children[NW] = new QuadTreeNode<CoordType, Value, Capacity, Strategy>({newXLOW, yMid, xMid, newYHIGH});
         children[NE] = new QuadTreeNode<CoordType, Value, Capacity, Strategy>({xMid, yMid, newXHIGH, newYHIGH});
@@ -417,12 +403,12 @@ public:
             data.erase(it);
             return true;
         } else {
-            CoordType xMid = children[NE]->box[XLOW];
-            CoordType yMid = children[NE]->box[YLOW];
-            size_t q = getQuadrant(r, xMid, yMid);
-            if (children[q]->remove(r)) {
-                tryMerge();
-                return true;
+            for (auto c : children) {
+                if (r.pt[0] >= c->box[XLOW] && r.pt[0] <= c->box[XHIGH] &&
+                    r.pt[1] >= c->box[YLOW] && r.pt[1] <= c->box[YHIGH] && c->remove(r)) {
+                    tryMerge();
+                    return true;
+                }
             }
             return false;
         }

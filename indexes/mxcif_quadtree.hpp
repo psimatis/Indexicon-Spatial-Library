@@ -157,17 +157,15 @@ public:
         if (h <= 0) 
             h = CoordType(1);
 
-        CoordType newXLOW  = (r.box[XLOW]  < box[XLOW])  ? box[XLOW]  - w : box[XLOW];
-        CoordType newXHIGH = (r.box[XHIGH] > box[XHIGH]) ? box[XHIGH] + w : box[XHIGH];
-        CoordType newYLOW  = (r.box[YLOW]  < box[YLOW])  ? box[YLOW]  - h : box[YLOW];
-        CoordType newYHIGH = (r.box[YHIGH] > box[YHIGH]) ? box[YHIGH] + h : box[YHIGH];
-
-        CoordType newXMid = (newXLOW + newXHIGH) / 2;
-        CoordType newYMid = (newYLOW + newYHIGH) / 2;
-
-        CoordType oldCX = (box[XLOW] + box[XHIGH]) / 2;
-        CoordType oldCY = (box[YLOW] + box[YHIGH]) / 2;
-        size_t oldQ = (oldCX >= newXMid ? 1 : 0) + (oldCY < newYMid ? 2 : 0);
+        bool growLowX = r.box[XLOW] < box[XLOW];
+        bool growLowY = r.box[YLOW] < box[YLOW];
+        CoordType newXLOW  = growLowX ? box[XLOW] - w : box[XLOW];
+        CoordType newXHIGH = growLowX ? box[XHIGH] : box[XHIGH] + w;
+        CoordType newYLOW  = growLowY ? box[YLOW] - h : box[YLOW];
+        CoordType newYHIGH = growLowY ? box[YHIGH] : box[YHIGH] + h;
+        CoordType newXMid = growLowX ? box[XLOW] : box[XHIGH];
+        CoordType newYMid = growLowY ? box[YLOW] : box[YHIGH];
+        size_t oldQ = growLowX ? (growLowY ? NE : SE) : (growLowY ? NW : SW);
 
         auto* oldNode = new MXCIFQuadTreeNode<CoordType, Value, Capacity>(box);
         oldNode->xStraddle = move(xStraddle);
@@ -180,7 +178,8 @@ public:
         data.clear();
 
         box = {newXLOW, newYLOW, newXHIGH, newYHIGH};
-        updateMidpoints();
+        xMid = newXMid;
+        yMid = newYMid;
         children[NW] = new MXCIFQuadTreeNode<CoordType, Value, Capacity>({newXLOW, newYMid, newXMid, newYHIGH});
         children[NE] = new MXCIFQuadTreeNode<CoordType, Value, Capacity>({newXMid, newYMid, newXHIGH, newYHIGH});
         children[SW] = new MXCIFQuadTreeNode<CoordType, Value, Capacity>({newXLOW, newYLOW, newXMid, newYMid});
@@ -456,8 +455,8 @@ public:
             }
             return false;
         }
-        if (!storedHere(r)) {
-            if (children[getQuadrant(r)]->remove(r)) {
+        for (auto c : children) {
+            if (c->intersectsBox(r) && c->remove(r)) {
                 tryMerge();
                 return true;
             }

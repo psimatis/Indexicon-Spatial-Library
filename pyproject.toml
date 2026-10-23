@@ -1,0 +1,44 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "nanobind>=2.2.0"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "indexicon"
+version = "1.1.0"
+description = "Python bindings for Indexicon spatial indexes"
+readme = "python/README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["numpy>=1.20"]
+
+[project.optional-dependencies]
+dev = ["build>=1", "pytest>=7"]
+
+[tool.scikit-build]
+cmake.source-dir = "python"
+wheel.packages = ["python/src/indexicon"]
+sdist.include = [
+    "indexes/*.hpp",
+    "python/CMakeLists.txt",
+    "python/README.md",
+    "python/bindings/**",
+    "python/src/**",
+    "python/tests/**",
+    "LICENSE",
+    "CITATION.cff",
+]
+sdist.exclude = [
+    "**/__pycache__",
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "**/*.pyo",
+    ".pytest_cache/**",
+    ".venv/**",
+]
+
+[tool.cibuildwheel]
+test-requires = ["numpy>=1.20", "pytest>=7"]
+test-command = "pytest {project}/python/tests"
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]

@@ -1,5 +1,5 @@
 *.exe
-*.txt
+data/**/*.txt
 __pycache__/
 *.py[cod]
 *.so
@@ -19,3 +19,4 @@ cmake-build-*/
 CMakeCache.txt
 CMakeFiles/
 compile_commands.json
+.vscode/
